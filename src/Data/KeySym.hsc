@@ -7,11 +7,13 @@ File auto-generated from script tools/mkKeySyms.hs using the input file
 
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE GeneralisedNewtypeDeriving, DeriveGeneric #-}
 {-# OPTIONS_GHC -Wall -fno-warn-tabs #-}
 
 module Data.KeySym where
 
+import GHC.Generics
+import Control.DeepSeq
 import Foreign.Storable
 import Foreign.C.Types
 import Foreign.C.Enum
@@ -46,7 +48,7 @@ import Foreign.C.Enum
 #include <keysymdef.h>
 #include <XF86keysym.h>
 
-enum "KeySym" ''CUInt [''Show, ''Eq, ''Storable] [
+enum "KeySym" ''CUInt [''Show, ''Eq, ''Generic, ''Storable] [
 	("Xk_VoidSymbol", #{const XK_VoidSymbol}),
 	("Xk_BackSpace", #{const XK_BackSpace}),
 	("Xk_Tab", #{const XK_Tab}),
@@ -2335,3 +2337,4 @@ enum "KeySym" ''CUInt [''Show, ''Eq, ''Storable] [
 	("Xf86xk_Prev_VMode", #{const XF86XK_Prev_VMode}),
 	("Xf86xk_LogWindowTree", #{const XF86XK_LogWindowTree}),
 	("Xf86xk_LogGrabInfo", #{const XF86XK_LogGrabInfo}) ]
+instance NFData KeySym

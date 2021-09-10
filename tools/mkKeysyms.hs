@@ -21,11 +21,13 @@ File auto-generated from script tools/mkKeySyms.hs using the input file
 
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE GeneralisedNewtypeDeriving, DeriveGeneric #-}
 {-# OPTIONS_GHC -Wall -fno-warn-tabs #-}
 
 module Data.KeySym where
 
+import GHC.Generics
+import Control.DeepSeq
 import Foreign.Storable
 import Foreign.C.Types
 import Foreign.C.Enum
@@ -35,7 +37,7 @@ header2 = [nowdoc|
 #include <keysymdef.h>
 #include <XF86keysym.h>
 
-enum "KeySym" ''CUInt [''Show, ''Eq, ''Storable] [
+enum "KeySym" ''CUInt [''Show, ''Eq, ''Generic, ''Storable] [
 |]
 
 main :: IO ()
@@ -49,7 +51,7 @@ main = do
 		. filter (not . ("_EVDEVK" `isInfixOf`)) . filter ("#define XF86XK_" `isPrefixOf`) . lines <$> readFile fp2
 	putStr body1
 	putStr body2
-	writeFile dstFile $ body1 ++ body2
+	writeFile dstFile $ body1 ++ body2 ++ "instance NFData KeySym\n"
 
 readFiles :: [FilePath] -> IO String
 readFiles fs = concat <$> readFile `mapM` fs
